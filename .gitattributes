@@ -1,0 +1,4 @@
+# Normaliza los finales de línea: se guardan siempre igual dentro del
+# repositorio y cada sistema los recibe en su formato al descargarlos.
+# Evita que Git marque archivos enteros como cambiados sin motivo.
+* text=auto
