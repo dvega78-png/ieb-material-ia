@@ -13,7 +13,11 @@ indica qué se ha modificado y cuándo.
 
 ## Contenido
 
-Pendiente de publicar.
+- [Arrancar un proyecto en VS Code sin saber programar](arrancar-proyecto-vs-code.md)
+  Instalación de VS Code, Git y Claude Code, primer repositorio y copia de
+  seguridad en GitHub. Escrita para Windows.
+  Disponible también como página web: [arrancar-proyecto-vs-code.html](arrancar-proyecto-vs-code.html)
+  (descarga el ZIP y ábrela con doble clic).
 
 ## Enlaces útiles
 
@@ -24,6 +28,8 @@ Pendiente de publicar.
 | Fecha | Cambio |
 | --- | --- |
 | 2026-09-27 | Repositorio creado |
+| 2026-09-27 | Añadida la guía de arranque de proyectos en VS Code |
+| 2026-09-27 | Versión HTML de la guía de arranque |
 
 ## Aviso
 

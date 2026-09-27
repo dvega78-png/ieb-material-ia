@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arrancar un proyecto en VS Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#f4f6f9;
+    --surface:#ffffff;
+    --surface-2:#eef2f7;
+    --ink:#161f2a;
+    --ink-2:#3d4c5c;
+    --muted:#63748a;
+    --line:#d6dee8;
+    --line-soft:#e4eaf2;
+    --accent:#2d5b8a;
+    --accent-2:#1f4368;
+    --accent-soft:#e6eef7;
+    --flag:#8a5a1f;
+    --flag-soft:#f7efe2;
+    --code-bg:#1d2733;
+    --code-ink:#dde6f0;
+    --code-dim:#8fa3b8;
+    --shadow:0 1px 2px rgba(22,31,42,.05), 0 8px 24px -16px rgba(22,31,42,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --paper:#0e151d;
+      --surface:#151e28;
+      --surface-2:#1b2733;
+      --ink:#e3eaf2;
+      --ink-2:#bac7d6;
+      --muted:#8496a9;
+      --line:#2a3846;
+      --line-soft:#223040;
+      --accent:#7fb0e0;
+      --accent-2:#a9cbec;
+      --accent-soft:#17283a;
+      --flag:#d9a75f;
+      --flag-soft:#2c2416;
+      --code-bg:#0a1119;
+      --code-ink:#d6e2ee;
+      --code-dim:#7b8ea3;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --paper:#0e151d;
+    --surface:#151e28;
+    --surface-2:#1b2733;
+    --ink:#e3eaf2;
+    --ink-2:#bac7d6;
+    --muted:#8496a9;
+    --line:#2a3846;
+    --line-soft:#223040;
+    --accent:#7fb0e0;
+    --accent-2:#a9cbec;
+    --accent-soft:#17283a;
+    --flag:#d9a75f;
+    --flag-soft:#2c2416;
+    --code-bg:#0a1119;
+    --code-ink:#d6e2ee;
+    --code-dim:#7b8ea3;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Source Sans 3", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16.5px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1140px;margin-inline:auto;padding-inline:20px}
+
+  /* ---------- cabecera ---------- */
+  .hero{padding-block:56px 40px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:"Source Sans 3",sans-serif;
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 18px
+  }
+  h1{
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    font-weight:700;
+    font-size:clamp(2rem, 5.2vw, 3.1rem);
+    line-height:1.08;
+    letter-spacing:-.018em;
+    margin:0 0 18px;
+    text-wrap:balance;
+    max-width:18ch;
+  }
+  .standfirst{
+    font-size:1.12rem;color:var(--ink-2);max-width:62ch;margin:0 0 28px;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:5px 13px;
+    font-size:13.5px;color:var(--ink-2);
+  }
+  .chip b{color:var(--ink);font-weight:600}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+
+  /* ---------- rejilla ---------- */
+  .layout{padding-block:40px 72px}
+  @media (min-width:980px){
+    .layout{display:grid;grid-template-columns:232px minmax(0,1fr);gap:56px;align-items:start}
+  }
+
+  /* ---------- índice ---------- */
+  .toc{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:18px 18px 16px;margin-bottom:36px;box-shadow:var(--shadow)
+  }
+  @media (min-width:980px){
+    .toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);margin-bottom:0}
+  }
+  .toc h2{
+    font-family:"Source Sans 3",sans-serif;
+    font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 12px
+  }
+  .toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+  @media (max-width:979px){.toc ol{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 18px}}
+  .toc a{
+    display:flex;gap:9px;align-items:baseline;
+    color:var(--ink-2);text-decoration:none;
+    font-size:14.2px;line-height:1.35;padding:4px 0;
+    border-radius:4px;
+  }
+  .toc a:hover{color:var(--accent)}
+  .toc .n{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;color:var(--muted);flex:none;min-width:1.4em;
+    font-variant-numeric:tabular-nums;
+  }
+  .toc li.done a{color:var(--muted)}
+  .toc li.done .n::after{content:"\2713";color:var(--accent);margin-left:2px}
+  .progress{margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft)}
+  .bar{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s ease}
+  .progress p{margin:8px 0 0;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* ---------- contenido ---------- */
+  .content{max-width:68ch}
+  section{padding-block:8px 34px;border-bottom:1px solid var(--line-soft)}
+  section:last-of-type{border-bottom:0}
+  .content h2{
+    font-family:"Source Serif 4",Georgia,serif;
+    font-size:clamp(1.42rem,3.1vw,1.72rem);font-weight:700;line-height:1.22;
+    letter-spacing:-.011em;margin:28px 0 14px;text-wrap:balance;
+    display:flex;gap:14px;align-items:baseline;
+  }
+  .content h2 .num{
+    font-family:"IBM Plex Mono",monospace;font-size:.72em;font-weight:500;
+    color:var(--accent);flex:none;font-variant-numeric:tabular-nums;
+  }
+  .content h3{
+    font-family:"Source Sans 3",sans-serif;font-size:1.02rem;font-weight:700;
+    margin:26px 0 8px;color:var(--ink);
+  }
+  p{margin:0 0 14px}
+  .content ul,.content ol{margin:0 0 14px;padding-left:1.35em}
+  .content li{margin-bottom:6px}
+  strong{font-weight:700;color:var(--ink)}
+  a{color:var(--accent);text-underline-offset:2px}
+
+  /* ---------- código ---------- */
+  .code{position:relative;margin:0 0 16px}
+  pre{
+    margin:0;background:var(--code-bg);color:var(--code-ink);
+    border-radius:8px;padding:15px 52px 15px 16px;
+    overflow-x:auto;
+    font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:13.4px;line-height:1.72;
+  }
+  pre .c{color:var(--code-dim)}
+  code{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.88em;
+    background:var(--surface-2);border:1px solid var(--line-soft);
+    border-radius:4px;padding:1px 5px;color:var(--ink);
+  }
+  pre code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+  .copy{
+    position:absolute;top:9px;right:9px;
+    background:rgba(255,255,255,.08);color:var(--code-dim);
+    border:1px solid rgba(255,255,255,.14);border-radius:5px;
+    font-family:"Source Sans 3",sans-serif;font-size:11.5px;font-weight:600;
+    padding:4px 9px;cursor:pointer;transition:all .15s ease;
+  }
+  .copy:hover{background:rgba(255,255,255,.16);color:#fff}
+  .copy.ok{color:#8fd4a0;border-color:rgba(143,212,160,.45)}
+
+  /* ---------- avisos ---------- */
+  .nota,.aviso{
+    border-radius:8px;padding:14px 16px;margin:0 0 16px;
+    font-size:15.4px;
+  }
+  .nota{background:var(--accent-soft);border-left:3px solid var(--accent)}
+  .aviso{background:var(--flag-soft);border-left:3px solid var(--flag)}
+  .nota p:last-child,.aviso p:last-child{margin-bottom:0}
+  .lab{
+    display:block;font-size:11.5px;font-weight:700;letter-spacing:.11em;
+    text-transform:uppercase;margin-bottom:5px;
+  }
+  .nota .lab{color:var(--accent)}
+  .aviso .lab{color:var(--flag)}
+
+  /* ---------- tablas ---------- */
+  .tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:14.8px;min-width:420px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  th{
+    font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);background:var(--surface-2);white-space:nowrap;
+  }
+  tr:last-child td{border-bottom:0}
+  td code{font-size:.85em}
+
+  /* ---------- diagrama del ciclo ---------- */
+  .ciclo{
+    display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;
+    margin:0 0 18px;padding:18px;background:var(--surface);
+    border:1px solid var(--line);border-radius:10px;
+  }
+  .paso{
+    flex:1 1 128px;background:var(--surface-2);border:1px solid var(--line-soft);
+    border-radius:7px;padding:11px 12px;min-width:0;
+  }
+  .paso span{
+    display:block;font-size:10.5px;font-weight:700;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:3px;
+  }
+  .paso b{
+    font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;
+    color:var(--ink);word-break:break-word;
+  }
+  .paso.fin{background:var(--accent-soft);border-color:var(--accent)}
+  .paso.fin b{font-family:"Source Sans 3",sans-serif;font-weight:600}
+  .flecha{display:flex;align-items:center;color:var(--muted);font-size:15px;flex:none}
+  .vuelta{
+    flex-basis:100%;text-align:center;font-size:12.5px;color:var(--muted);
+    margin-top:4px;
+  }
+
+  /* ---------- botón hecho ---------- */
+  .hecho{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--line);border-radius:7px;
+    color:var(--muted);font-family:"Source Sans 3",sans-serif;
+    font-size:13.2px;font-weight:600;padding:6px 13px;cursor:pointer;
+    transition:all .15s ease;margin-top:6px;
+  }
+  .hecho:hover{border-color:var(--accent);color:var(--accent)}
+  .hecho .box{
+    width:14px;height:14px;border:1.5px solid currentColor;border-radius:3px;
+    flex:none;display:grid;place-items:center;font-size:10px;line-height:1;
+  }
+  .hecho[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-2)}
+  .hecho[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent);color:#fff}
+  .hecho[aria-pressed="true"] .box::after{content:"\2713"}
+
+  /* ---------- glosario ---------- */
+  .glos{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:22px 22px 8px;margin-top:8px;box-shadow:var(--shadow)
+  }
+  .glos dl{margin:0;display:grid;gap:0}
+  .glos div{padding:11px 0;border-bottom:1px solid var(--line-soft);display:grid;gap:2px}
+  .glos div:last-child{border-bottom:0}
+  .glos dt{
+    font-family:"IBM Plex Mono",monospace;font-size:13.4px;font-weight:500;color:var(--accent-2);
+  }
+  .glos dd{margin:0;font-size:14.8px;color:var(--ink-2)}
+
+  footer{
+    border-top:1px solid var(--line);padding-block:26px 44px;
+    font-size:13.5px;color:var(--muted);max-width:68ch;
+  }
+  footer p{margin:0 0 8px}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+  :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Material del curso · IEB</p>
+    <h1>Arrancar un proyecto en VS&nbsp;Code</h1>
+    <p class="standfirst">Guía de instalación y primeros pasos para quien no ha tocado nunca un editor de código. Al terminar tendrás un proyecto funcionando en tu ordenador, con historial de cambios, copia de seguridad en internet y un asistente de IA trabajando dentro del editor.</p>
+    <ul class="chips">
+      <li class="chip"><i class="dot"></i>Para <b>Windows</b></li>
+      <li class="chip"><i class="dot"></i><b>45 a 60 min</b> la primera vez</li>
+      <li class="chip"><i class="dot"></i>No hace falta <b>saber programar</b></li>
+    </ul>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Índice">
+      <h2>Los doce pasos</h2>
+      <ol>
+        <li data-for="s1"><a href="#s1"><i class="n">1</i>Las cinco piezas</a></li>
+        <li data-for="s2"><a href="#s2"><i class="n">2</i>Comprobar e instalar</a></li>
+        <li data-for="s3"><a href="#s3"><i class="n">3</i>El mapa de VS Code</a></li>
+        <li data-for="s4"><a href="#s4"><i class="n">4</i>Crear el proyecto</a></li>
+        <li data-for="s5"><a href="#s5"><i class="n">5</i>Carpeta a repositorio</a></li>
+        <li data-for="s6"><a href="#s6"><i class="n">6</i>El .gitignore</a></li>
+        <li data-for="s7"><a href="#s7"><i class="n">7</i>Tu primer commit</a></li>
+        <li data-for="s8"><a href="#s8"><i class="n">8</i>Subirlo a GitHub</a></li>
+        <li data-for="s9"><a href="#s9"><i class="n">9</i>El ciclo diario</a></li>
+        <li data-for="s10"><a href="#s10"><i class="n">10</i>Claude Code</a></li>
+        <li data-for="s11"><a href="#s11"><i class="n">11</i>Cuando algo falla</a></li>
+        <li data-for="s12"><a href="#s12"><i class="n">12</i>Cinco reglas</a></li>
+      </ol>
+      <div class="progress">
+        <div class="bar"><i id="barra"></i></div>
+        <p id="cuenta">0 de 12 pasos hechos</p>
+      </div>
+    </nav>
+
+    <main class="content">
+
+      <section id="s1">
+        <h2><i class="num">01</i>Las cinco piezas</h2>
+        <p>Los nombres se parecen y ahí empieza la confusión. Son cinco cosas distintas:</p>
+        <div class="tw"><table>
+          <thead><tr><th>Pieza</th><th>Qué es</th><th>Dónde vive</th></tr></thead>
+          <tbody>
+            <tr><td>La carpeta del proyecto</td><td>Una carpeta normal de tu ordenador</td><td>Tu disco duro</td></tr>
+            <tr><td>VS Code</td><td>El editor: la ventana donde trabajas</td><td>Tu ordenador</td></tr>
+            <tr><td>Git</td><td>El programa que guarda el historial de esa carpeta</td><td>Tu ordenador, sin ventana propia</td></tr>
+            <tr><td>GitHub</td><td>La web donde vive la copia de ese historial</td><td>Internet</td></tr>
+            <tr><td>Claude Code</td><td>El asistente que lee y escribe archivos por ti</td><td>Dentro de VS Code</td></tr>
+          </tbody>
+        </table></div>
+        <div class="nota">
+          <span class="lab">La confusión más habitual</span>
+          <p>Git es el programa que guarda fotos de tu carpeta y funciona sin conexión a internet. GitHub es el sitio web donde subes esas fotos para tener respaldo y poder compartirlas. Puedes usar Git sin GitHub, pero entonces no tienes copia de seguridad.</p>
+        </div>
+        <button class="hecho" data-sec="s1" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s2">
+        <h2><i class="num">02</i>Comprobar qué tienes e instalar lo que falte</h2>
+        <p>Antes de instalar nada, comprueba. Es posible que ya tengas alguna pieza.</p>
+        <p>Abre VS Code y dentro de él abre el terminal: menú <strong>Terminal</strong>, opción <strong>Nuevo terminal</strong>. Escribe estas dos líneas, una cada vez, pulsando Intro:</p>
+        <div class="code"><pre><code>git --version
+node --version</code></pre></div>
+        <p>Si te responde algo como <code>git version 2.55.0</code>, ya lo tienes. Si te dice que no reconoce el comando, te falta.</p>
+        <h3>VS Code</h3>
+        <p>Si aún no lo tienes, descárgalo de <code>code.visualstudio.com</code>.</p>
+        <h3>Git para Windows</h3>
+        <p>Descárgalo de <code>git-scm.com</code> y ejecuta el instalador. Son muchas pantallas de opciones, y la respuesta correcta en todas es dejar lo que viene marcado y pulsar siguiente. Al terminar, <strong>cierra VS Code por completo y vuelve a abrirlo</strong>, porque si no el terminal seguirá sin encontrarlo.</p>
+        <h3>Node</h3>
+        <p>Descárgalo de <code>nodejs.org</code> eligiendo la versión <strong>LTS</strong>. Lo necesita el asistente de IA.</p>
+        <h3>Cuenta de GitHub</h3>
+        <p>Créala en <code>github.com</code> si no la tienes. Usa un correo al que vayas a seguir teniendo acceso dentro de dos años y activa la verificación en dos pasos cuando te la ofrezca.</p>
+        <h3>Claude Code</h3>
+        <p>En VS Code, abre el panel de extensiones (el icono de los cuatro cuadrados, o <code>Ctrl</code> + <code>Mayús</code> + <code>X</code>), busca <code>Claude Code</code> e instala el que publica <strong>Anthropic</strong>. Fíjate en el nombre del editor bajo el título, porque suelen aparecer extensiones parecidas de terceros.</p>
+        <div class="aviso">
+          <span class="lab">Ojo</span>
+          <p>Las herramientas de IA cambian de forma de instalarse cada pocos meses. Si lo que ves en pantalla no coincide con esto, haz caso a la pantalla.</p>
+        </div>
+        <button class="hecho" data-sec="s2" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s3">
+        <h2><i class="num">03</i>El mapa de VS Code</h2>
+        <p>VS Code tiene muchas zonas. Para empezar solo necesitas cuatro:</p>
+        <div class="tw"><table>
+          <thead><tr><th>Zona</th><th>Dónde está</th><th>Para qué la usas</th><th>Cómo se abre</th></tr></thead>
+          <tbody>
+            <tr><td>Barra de iconos</td><td>Borde izquierdo</td><td>Cambiar entre paneles</td><td>Siempre visible</td></tr>
+            <tr><td>Explorador</td><td>Panel izquierdo</td><td>Ver y abrir los archivos</td><td>Primer icono, dos hojas</td></tr>
+            <tr><td>Editor</td><td>Centro</td><td>Escribir y leer archivos</td><td>Al abrir cualquier archivo</td></tr>
+            <tr><td>Terminal</td><td>Franja inferior</td><td>Escribir órdenes de Git</td><td>Menú Terminal, Nuevo terminal</td></tr>
+          </tbody>
+        </table></div>
+        <p>El tercer icono de la barra, tres puntos unidos por líneas, es el <strong>control de código fuente</strong>: la cara visible de Git dentro del editor. Ahí verás la lista de archivos que has cambiado desde la última vez que guardaste.</p>
+        <p>La pieza que probablemente no hayas usado nunca es el <strong>terminal</strong>, y es la que más vas a necesitar, porque Git se maneja escribiendo órdenes. No tiene misterio: escribes una línea, pulsas Intro y te responde. Si te equivocas al teclear, te dirá que no reconoce el comando y no pasa nada más.</p>
+        <p>Guarda este atajo: <code>Ctrl</code> + <code>Mayús</code> + <code>P</code> abre la <strong>paleta de comandos</strong>, un buscador de todo lo que VS Code sabe hacer. Si no encuentras una opción en los menús, escríbela ahí.</p>
+        <div class="nota">
+          <span class="lab">Por si te despista</span>
+          <p>Según cómo lo tengas instalado, los menús pueden aparecer en inglés: <em>Terminal, New Terminal</em> en lugar de <em>Terminal, Nuevo terminal</em>.</p>
+        </div>
+        <button class="hecho" data-sec="s3" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s4">
+        <h2><i class="num">04</i>Crear el proyecto y abrirlo</h2>
+        <p>En VS Code no se abren archivos sueltos, se abre <strong>una carpeta entera</strong>. Esa carpeta pasa a ser el proyecto, y todo lo que ocurra después queda limitado a ella.</p>
+        <p>Crea una carpeta donde guardes tus cosas, con un nombre corto y sin espacios, por ejemplo <code>mi-proyecto</code>. Después, en VS Code: menú <strong>Archivo</strong>, <strong>Abrir carpeta</strong>, la eliges y aceptas. Si te pregunta si confías en los autores de la carpeta, responde que sí: es tuya.</p>
+        <p>Ya deberías ver el nombre de tu carpeta en el explorador de la izquierda.</p>
+        <button class="hecho" data-sec="s4" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s5">
+        <h2><i class="num">05</i>Convertir la carpeta en repositorio</h2>
+        <p>Un <strong>repositorio</strong> es una carpeta normal a la que Git vigila. La diferencia es que Git guarda dentro, en una subcarpeta oculta llamada <code>.git</code>, el historial completo de todo lo que pasa ahí.</p>
+        <p>Las tres primeras líneas solo hay que escribirlas <strong>una vez en la vida</strong>: le dicen a Git quién eres y que tus repositorios nuevos empiecen con la rama llamada <code>main</code>, que es la convención actual.</p>
+        <div class="code"><pre><code>git config --global user.name "Tu Nombre"
+git config --global user.email "tu-correo@ejemplo.com"
+git config --global init.defaultBranch main</code></pre></div>
+        <p>Usa el mismo correo que en GitHub. Si no coincide funcionará igual, pero GitHub no reconocerá los cambios como tuyos.</p>
+        <p>Y ahora, dentro de la carpeta del proyecto:</p>
+        <div class="code"><pre><code>git init</code></pre></div>
+        <p>Para comprobar que ha ido bien, escribe <code>git status</code>. Te dirá que estás en la rama <code>main</code>, que no hay ningún commit todavía y que hay archivos sin seguimiento.</p>
+        <div class="nota">
+          <span class="lab">Esa respuesta parece un error y no lo es</span>
+          <p>Significa que el repositorio existe y que aún no has guardado nada dentro. Dos cosas más: la carpeta <code>.git</code> <em>es</em> el repositorio, así que si la borras pierdes todo el historial aunque los archivos sigan ahí. Y <code>git init</code> no ha enviado nada a ninguna parte: todo ocurre en tu ordenador.</p>
+        </div>
+        <button class="hecho" data-sec="s5" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s6">
+        <h2><i class="num">06</i>El .gitignore, antes de guardar nada</h2>
+        <p>Este paso va <strong>antes</strong> del primer commit, y el orden importa.</p>
+        <p>Git guarda historial, y el historial no se borra. Si una contraseña o una clave entra en un commit, borrarla después del archivo no la saca del historial. En un repositorio público hay que darla por comprometida y cambiarla.</p>
+        <p><code>.gitignore</code> es un archivo de texto con la lista de lo que Git debe ignorar. Créalo en la raíz del proyecto con el icono de archivo nuevo del explorador, llamándolo exactamente <code>.gitignore</code>, con el punto delante y sin extensión. Pega esto dentro:</p>
+        <div class="code"><pre><code><span class="c"># Claves y configuración privada</span>
+.env
+.env.*
+*serviceAccount*.json
+*credentials*.json
+
+<span class="c"># Dependencias y compilados</span>
+node_modules/
+dist/
+build/
+
+<span class="c"># Sistema y editor</span>
+Thumbs.db
+desktop.ini
+.vscode/</code></pre></div>
+        <p>Cada línea es un patrón. <code>node_modules/</code> ignora esa carpeta entera, que puede tener decenas de miles de archivos y se regenera sola. Las líneas que empiezan por <code>#</code> son comentarios para ti; Git las ignora.</p>
+        <div class="aviso">
+          <span class="lab">La regla práctica</span>
+          <p>Si un archivo contiene algo que no dirías en voz alta delante de desconocidos, no debe entrar en Git.</p>
+        </div>
+        <button class="hecho" data-sec="s6" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s7">
+        <h2><i class="num">07</i>Tu primer commit</h2>
+        <p>Un <strong>commit</strong> es una foto del proyecto entero en un momento dado, con una nota que explica por qué la hiciste. Guardar un commit son dos gestos, no uno: primero eliges qué entra en la foto, después la haces.</p>
+        <div class="code"><pre><code>git add .
+git commit -m "Punto de partida del proyecto"</code></pre></div>
+        <p>La primera línea prepara todos los archivos de la carpeta, salvo los que excluiste en <code>.gitignore</code>. El punto significa <em>todo</em>. La segunda hace la foto y le pone el mensaje que va entre comillas.</p>
+        <p>Escribe <code>git log</code> y verás tu commit: un código largo que lo identifica, tu nombre, la fecha y el mensaje. Se sale de esa pantalla pulsando la tecla <code>q</code>.</p>
+        <h3>Sobre los mensajes</h3>
+        <p>Es la parte que todo el mundo descuida y luego lamenta. Dentro de unos meses estarás buscando cuándo rompiste algo, y lo único que verás de cada commit será esa frase. Escribe <strong>qué</strong> cambiaste y <strong>por qué</strong>, no cómo.</p>
+        <div class="tw"><table>
+          <thead><tr><th>En vez de</th><th>Escribe</th></tr></thead>
+          <tbody>
+            <tr><td><code>cambios</code></td><td>Añadido el guion de la sesión del lunes</td></tr>
+            <tr><td><code>actualización</code></td><td>Corregidos los tiempos del segundo bloque</td></tr>
+            <tr><td><code>asdf</code></td><td>Primera versión del índice de contenidos</td></tr>
+          </tbody>
+        </table></div>
+        <div class="nota">
+          <span class="lab">Con el ratón también vale</span>
+          <p>El tercer icono de la barra hace lo mismo sin escribir. Conviene que hagas los primeros a mano, para entender qué está pasando, y luego uses lo que te resulte cómodo.</p>
+        </div>
+        <button class="hecho" data-sec="s7" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s8">
+        <h2><i class="num">08</i>Subirlo a GitHub</h2>
+        <p>Hasta aquí todo vive en tu ordenador. Si se estropea el disco, se pierde. Este paso es el que convierte el historial en copia de seguridad de verdad.</p>
+        <p>Entra en <code>github.com</code>, pulsa el botón verde <strong>New</strong> y rellena tres cosas:</p>
+        <ol>
+          <li><strong>Repository name</strong>: un nombre sin espacios ni acentos.</li>
+          <li><strong>Visibilidad</strong>: elige con cuidado. <strong>Private</strong> lo ves solo tú; <strong>Public</strong> lo ve cualquiera en internet, no solo las personas a quienes pases el enlace.</li>
+          <li><strong>No marques nada</strong> en <em>Initialize this repository with</em>. Tu carpeta ya tiene contenido, y marcar esas casillas provoca un choque incómodo de resolver.</li>
+        </ol>
+        <p>Pulsa <strong>Create repository</strong>. La pantalla que aparece trae los comandos exactos, ya con tu nombre de usuario dentro. Usa el segundo bloque, el que dice <em>«...or push an existing repository from the command line»</em>:</p>
+        <div class="code"><pre><code>git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
+git branch -M main
+git push -u origin main</code></pre></div>
+        <p>La primera línea apunta tu carpeta al repositorio de GitHub y le pone el nombre <code>origin</code>, que es la convención. La segunda asegura que la rama se llama <code>main</code>. La tercera sube todo.</p>
+        <p>La primera vez se abrirá una ventana del navegador pidiéndote que autorices a Git a entrar en tu cuenta. Acepta: Windows guarda esa autorización y no vuelve a pedirla.</p>
+        <p>Recarga la página del repositorio. Si ves tus archivos, ya tienes respaldo. Comprueba de paso que la visibilidad es la que querías y que no hay ningún archivo de claves en la lista.</p>
+        <button class="hecho" data-sec="s8" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s9">
+        <h2><i class="num">09</i>El ciclo diario</h2>
+        <p>Todo lo anterior se hace una vez. A partir de ahora, tu trabajo con Git son tres líneas, siempre las mismas y siempre en este orden:</p>
+        <div class="code"><pre><code>git add .
+git commit -m "lo que has cambiado"
+git push</code></pre></div>
+        <div class="ciclo">
+          <div class="paso"><span>Trabajas</span><b>VS Code</b></div>
+          <div class="flecha">&rarr;</div>
+          <div class="paso"><span>Preparas</span><b>git add .</b></div>
+          <div class="flecha">&rarr;</div>
+          <div class="paso"><span>Fotografías</span><b>git commit -m</b></div>
+          <div class="flecha">&rarr;</div>
+          <div class="paso"><span>Subes</span><b>git push</b></div>
+          <div class="flecha">&rarr;</div>
+          <div class="paso fin"><span>Resultado</span><b>Copia a salvo en GitHub</b></div>
+          <p class="vuelta">y vuelta a empezar</p>
+        </div>
+        <p>Hazlo al terminar cada sesión de trabajo y siempre que acabes algo que no querrías rehacer. No hay límite ni coste: veinte commits pequeños al día son mejores que uno enorme, porque cuanto más fina sea la foto, más fácil es volver a un punto concreto.</p>
+        <p>Si algún día trabajas desde otro ordenador, empieza por <code>git pull</code>, que trae lo que haya de nuevo en GitHub antes de que tú añadas lo tuyo.</p>
+        <button class="hecho" data-sec="s9" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s10">
+        <h2><i class="num">10</i>Claude Code y el archivo de instrucciones</h2>
+        <p>Con la extensión instalada, Claude Code aparece como un panel dentro del editor. Se le habla en español y de forma normal, describiendo lo que quieres, y él lee y escribe los archivos del proyecto directamente. No hay sintaxis que aprender.</p>
+        <p>La diferencia con un chat normal es que <strong>aquí ve tus archivos y los modifica</strong>. Eso lo hace mucho más útil y también exige más cuidado, y es justo la razón por la que el respaldo va antes: con los commits al día, cualquier cambio que no te guste se deshace volviendo a la foto anterior.</p>
+        <p>Crea en la raíz del proyecto un archivo llamado <code>CLAUDE.md</code>, exactamente así en mayúsculas. Es el <strong>archivo de instrucciones del proyecto</strong>: Claude Code lo lee solo, cada vez, sin que tengas que recordarle nada.</p>
+        <div class="code"><pre><code><span class="c"># Proyecto: [nombre]</span>
+
+<span class="c">## Contexto</span>
+[Qué es esto y para qué sirve, en dos o tres líneas.]
+No programo. Explícamelo todo en español y sin jerga innecesaria.
+
+<span class="c">## Reglas</span>
+- Dime qué vas a hacer antes de hacerlo, y espera confirmación
+  en cambios grandes.
+- No instales dependencias sin avisarme y decirme para qué sirven.
+- Nunca escribas claves ni credenciales dentro de un archivo
+  del repositorio.
+- [Tus propias reglas de trabajo aquí.]</code></pre></div>
+        <p>Ese archivo va a crecer conforme tomes decisiones, y ahí está su valor: el criterio deja de repetirse en cada conversación y pasa a estar escrito, versionado y con dueño.</p>
+        <div class="nota">
+          <span class="lab">Una costumbre que te ahorra rehacer trabajo</span>
+          <p>Haz un commit antes de pedirle a Claude Code un cambio grande. Un minuto de trabajo que te devuelve la posibilidad de deshacerlo todo limpiamente.</p>
+        </div>
+        <button class="hecho" data-sec="s10" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s11">
+        <h2><i class="num">11</i>Cuando algo falla</h2>
+        <p>Git avisa en inglés y con tono seco, pero rara vez rompe nada.</p>
+        <div class="tw"><table>
+          <thead><tr><th>Lo que ves</th><th>Qué pasa</th><th>Qué haces</th></tr></thead>
+          <tbody>
+            <tr><td><code>git</code> no se reconoce como comando</td><td>Git no está instalado, o VS Code aún no lo ve</td><td>Instálalo y cierra VS Code del todo antes de reabrirlo</td></tr>
+            <tr><td><code>not a git repository</code></td><td>Estás en otra carpeta, o faltó el <code>git init</code></td><td>Comprueba que el proyecto abierto es el correcto</td></tr>
+            <tr><td><code>nothing to commit</code></td><td>No has cambiado nada desde el último commit</td><td>Nada que hacer, no es un error</td></tr>
+            <tr><td><code>rejected</code> al hacer push</td><td>Hay algo en GitHub que tú no tienes</td><td><code>git pull</code> y luego repites el push</td></tr>
+            <tr><td>Te pide usuario y contraseña y no funciona</td><td>GitHub ya no acepta la contraseña de la web</td><td>Deja que se abra el navegador y autoriza desde ahí</td></tr>
+          </tbody>
+        </table></div>
+        <p>Dos ideas de fondo que valen más que cualquier lista. La primera es que Git casi nunca pierde información: si algo llegó a estar en un commit, se puede recuperar. La segunda es que un mensaje de error no significa que lo estés haciendo mal, es la forma que tiene Git de hablar contigo.</p>
+        <div class="aviso">
+          <span class="lab">Lo que de verdad importa</span>
+          <p>Cuando algo se tuerza, no pruebes comandos al azar ni copies soluciones de foros sin entenderlas. Los comandos que circulan por internet incluyen a menudo <code>--force</code> y <code>reset --hard</code>, que son precisamente los que sí borran trabajo. Pregunta antes.</p>
+        </div>
+        <button class="hecho" data-sec="s11" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="s12">
+        <h2><i class="num">12</i>Cinco reglas para no romper nada</h2>
+        <ol>
+          <li><strong>El <code>.gitignore</code> se escribe antes que nada.</strong> Una clave en el historial se da por comprometida aunque la borres después.</li>
+          <li><strong>Comprueba la visibilidad del repositorio antes de subir nada.</strong> Público significa cualquiera, no solo quien tenga el enlace.</li>
+          <li><strong>Commit antes de un cambio grande.</strong> Es tu botón de deshacer.</li>
+          <li><strong>Mensajes de commit que digan algo.</strong> Tu yo de dentro de tres meses te lo agradecerá.</li>
+          <li><strong>No ejecutes comandos que no entiendes.</strong> Si no sabes lo que hace, pregunta.</li>
+        </ol>
+        <button class="hecho" data-sec="s12" aria-pressed="false"><i class="box"></i>Marcar como hecho</button>
+      </section>
+
+      <section id="glosario">
+        <h2>Glosario</h2>
+        <div class="glos">
+          <dl>
+            <div><dt>Repositorio</dt><dd>Una carpeta cuyo historial completo se guarda.</dd></div>
+            <div><dt>Commit</dt><dd>Una foto del proyecto, con un mensaje que dice por qué.</dd></div>
+            <div><dt>Rama (branch)</dt><dd>Una línea de trabajo. La principal se llama <code>main</code>.</dd></div>
+            <div><dt>origin</dt><dd>El nombre que se le da al repositorio remoto en GitHub.</dd></div>
+            <div><dt>Push</dt><dd>Subir tus commits a GitHub.</dd></div>
+            <div><dt>Pull</dt><dd>Traerte a tu ordenador lo que haya cambiado en GitHub.</dd></div>
+            <div><dt>Clone</dt><dd>Descargar un repositorio entero a tu ordenador.</dd></div>
+            <div><dt>.gitignore</dt><dd>La lista de lo que Git no debe guardar nunca.</dd></div>
+            <div><dt>Terminal</dt><dd>La franja donde escribes órdenes en lugar de pulsar botones.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <footer>
+        <p>Material de apoyo del curso <strong>IA para M&amp;A y Private Equity</strong> del IEB. Sesiones de David Vega, noviembre de 2026.</p>
+        <p>La responsabilidad última del trabajo realizado con estas herramientas recae en quien lo firma, y no en la herramienta ni en esta guía.</p>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var CLAVE = "guia-vscode-progreso";
+  var hechos = {};
+  try{
+    var raw = localStorage.getItem(CLAVE);
+    if(raw) hechos = JSON.parse(raw) || {};
+  }catch(e){ hechos = {}; }
+
+  var botones = Array.prototype.slice.call(document.querySelectorAll(".hecho"));
+  var barra = document.getElementById("barra");
+  var cuenta = document.getElementById("cuenta");
+
+  function pintar(){
+    var n = 0;
+    botones.forEach(function(b){
+      var id = b.getAttribute("data-sec");
+      var on = !!hechos[id];
+      if(on) n++;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.lastChild.nodeValue = on ? "Hecho" : "Marcar como hecho";
+      var li = document.querySelector('.toc li[data-for="' + id + '"]');
+      if(li) li.classList.toggle("done", on);
+    });
+    var total = botones.length;
+    barra.style.width = (total ? (n/total)*100 : 0) + "%";
+    cuenta.textContent = n + " de " + total + " pasos hechos";
+  }
+
+  botones.forEach(function(b){
+    b.addEventListener("click", function(){
+      var id = b.getAttribute("data-sec");
+      if(hechos[id]) delete hechos[id]; else hechos[id] = 1;
+      try{ localStorage.setItem(CLAVE, JSON.stringify(hechos)); }catch(e){}
+      pintar();
+    });
+  });
+  pintar();
+
+  // Botones de copiar en cada bloque de código
+  document.querySelectorAll(".code").forEach(function(caja){
+    var pre = caja.querySelector("pre");
+    if(!pre) return;
+    var btn = document.createElement("button");
+    btn.className = "copy";
+    btn.type = "button";
+    btn.textContent = "Copiar";
+    btn.addEventListener("click", function(){
+      var texto = pre.innerText;
+      function ok(){
+        btn.textContent = "Copiado";
+        btn.classList.add("ok");
+        setTimeout(function(){ btn.textContent = "Copiar"; btn.classList.remove("ok"); }, 1600);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(texto).then(ok, seleccionar);
+      } else {
+        seleccionar();
+      }
+      function seleccionar(){
+        var r = document.createRange();
+        r.selectNodeContents(pre);
+        var s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(r);
+        btn.textContent = "Selecciona y copia";
+        setTimeout(function(){ btn.textContent = "Copiar"; }, 2400);
+      }
+    });
+    caja.appendChild(btn);
+  });
+})();
+</script>
+
+</body>
+</html>
